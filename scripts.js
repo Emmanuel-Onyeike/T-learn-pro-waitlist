@@ -66,34 +66,45 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackModal.classList.add('hidden');
     };
 
-    waitlistBtn.onclick = () => {
-        const email = waitlistEmail.value.trim();
-        
-        // Basic Tactical Validation
-        if (!email || !email.includes('@')) {
-            showFeedback("Uplink Denied", "Please provide a valid authority email address.", true);
-            return;
-        }
+   waitlistBtn.onclick = async () => {
+    const email = waitlistEmail.value.trim().toLowerCase();
+    
+    // Basic Tactical Validation
+    if (!email || !email.includes('@')) {
+        showFeedback("Uplink Denied", "Please provide a valid authority email address.", true);
+        return;
+    }
 
-        // Simulate Network Processing
-        waitlistBtn.disabled = true;
-        waitlistBtn.innerHTML = '<i class="fas fa-spinner animate-spin"></i>';
+    // Disable button and show spinner
+    waitlistBtn.disabled = true;
+    waitlistBtn.innerHTML = '<i class="fas fa-spinner animate-spin"></i>';
 
-        setTimeout(() => {
-            showFeedback("Uplink Success", "Your priority position has been secured in the queue.");
-            waitlistBtn.disabled = false;
-            waitlistBtn.innerHTML = '<span class="relative z-10 text-[11px] font-black uppercase tracking-[0.5em]">Request Access</span>';
-            waitlistEmail.value = ''; // Clear terminal
-        }, 1500);
-    };
+    try {
+        // Send to your real Google Apps Script backend
+        await fetch('https://script.google.com/macros/s/AKfycbxNtAK6ToRg_J7USn9fNsoTGKGYpX2TkLEcGoddErh9IVRuv2ULYNn9xYgID46tBpSP/exec', {
+            method: 'POST',
+            body: new URLSearchParams({ 'email': email })
+        });
 
-    // --- 4. Magnetic Button Feel (Optional Polish) ---
-    waitlistBtn.addEventListener('mousemove', (e) => {
-        const rect = waitlistBtn.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        waitlistBtn.style.setProperty('--x', `${x}px`);
-        waitlistBtn.style.setProperty('--y', `${y}px`);
-    });
+        // Success! Real email saved + welcome email sent
+        showFeedback("Uplink Success", "Access confirmed. Welcome email sent to your inbox!", false);
+        waitlistEmail.value = ''; // Clear the input
+
+    } catch (err) {
+        showFeedback("Transmission Failed", "Network error — please try again.", true);
+    } finally {
+        // Always re-enable button and restore text
+        waitlistBtn.disabled = false;
+        waitlistBtn.innerHTML = '<span class="relative z-10 text-[11px] font-black uppercase tracking-[0.5em]">Request Access</span>';
+    }
+};
+
+// --- Magnetic Button Feel (Kept for that premium polish) ---
+waitlistBtn.addEventListener('mousemove', (e) => {
+    const rect = waitlistBtn.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    waitlistBtn.style.setProperty('--x', `${x}px`);
+    waitlistBtn.style.setProperty('--y', `${y}px`);
 });
