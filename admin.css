@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+:root {
+    --elite-blue: #2563eb;
+    --elite-dark: #020617;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.05);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    cursor: default;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--elite-dark);
+    color: white;
+    overflow-x: hidden;
+}
+
+/* --- TACTICAL KPI CARDS --- */
+.grid > div {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+    backdrop-filter: blur(10px);
+}
+
+.grid > div::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--elite-blue), transparent);
+    transform: translateX(-100%);
+    transition: 0.5s;
+}
+
+.grid > div:hover::after {
+    transform: translateX(100%);
+}
+
+/* --- DATA TABLE STYLING --- */
+table thead th {
+    letter-spacing: 0.3em;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+tbody tr {
+    transition: all 0.3s ease;
+}
+
+tbody tr:hover {
+    background: rgba(37, 99, 235, 0.05) !important;
+}
+
+/* --- INPUT TERMINAL STYLE --- */
+input {
+    cursor: text;
+}
+
+input::placeholder {
+    color: #475569;
+    letter-spacing: 0.2em;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes pulse-blue {
+    0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+.animate-pulse-slow {
+    animation: pulse-blue 3s infinite;
+}
+
+/* Satelite Dish Animation */
+.fa-satellite-dish {
+    filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.3));
+}
+
+/* --- SCROLLBAR --- */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--elite-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--elite-blue);
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 768px) {
+    .text-5xl {
+        font-size: 2.5rem;
+    }
+}

@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+:root {
+    --elite-blue: #2563eb;
+    --elite-cyan: #60a5fa;
+    --dark-bg: #020617;
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    cursor: default;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--dark-bg);
+    color: white;
+    overflow-x: hidden;
+    line-height: 1.5;
+}
+
+/* --- TACTICAL TYPOGRAPHY --- */
+h1 {
+    background: linear-gradient(to bottom, #ffffff 40%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+}
+
+/* Fix for the PRO gradient to ensure it overrides everything */
+h1 span {
+    background: linear-gradient(180deg, #93c5fd 0%, #2563eb 50%, #1e40af 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    display: inline-block;
+    filter: drop-shadow(0 0 25px rgba(37, 99, 235, 0.4));
+    animation: shimmer 5s infinite alternate;
+}
+
+@keyframes shimmer {
+    0% { filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.3)); brightness: 1; }
+    100% { filter: drop-shadow(0 0 35px rgba(37, 99, 235, 0.6)); brightness: 1.2; }
+}
+
+/* --- INTERACTIVE ELEMENTS --- */
+input, button, a {
+    cursor: pointer;
+}
+
+#waitlistEmail {
+    cursor: text;
+}
+
+/* Button Glow & Glint */
+#waitlistBtn {
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#waitlistBtn:hover {
+    box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Header Glass Reveal */
+.header-scrolled {
+    background: rgba(3, 8, 22, 0.8) !important;
+    backdrop-filter: blur(20px);
+    border-color: rgba(37, 99, 235, 0.3) !important;
+    transform: translateY(-2px) scale(0.99);
+}
+
+/* --- BACKGROUND ANIMATIONS --- */
+.blur-orb {
+    animation: orbFloat 20s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes orbFloat {
+    0% { transform: translate(0%, 0%) scale(1); opacity: 0.1; }
+    50% { transform: translate(10%, 5%) scale(1.2); opacity: 0.15; }
+    100% { transform: translate(-5%, 10%) scale(1); opacity: 0.1; }
+}
+
+/* --- FEEDBACK MODAL (TERMINAL STYLE) --- */
+.scan-line {
+    animation: scanMove 4s linear infinite;
+}
+
+@keyframes scanMove {
+    0% { transform: translateY(-10px); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(500px); opacity: 0; }
+}
+
+#feedbackModal:not(.hidden) {
+    display: flex;
+    animation: modalFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; backdrop-filter: blur(0px); }
+    to { opacity: 1; backdrop-filter: blur(3xl); }
+}
+
+#feedbackModal > div {
+    animation: modalPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes modalPop {
+    from { transform: scale(0.9) translateY(20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* --- MOBILE MENU ANIMATION --- */
+#mobileMenu:not(.hidden) {
+    display: flex;
+    animation: menuSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes menuSlide {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- SCROLLBAR --- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 20px;
+    border: 2px solid var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--elite-blue);
+}
+
+/* --- UTILITIES --- */
+.cursor-crosshair { cursor: crosshair; }
