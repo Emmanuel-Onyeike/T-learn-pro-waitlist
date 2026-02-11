@@ -166,3 +166,52 @@ document.getElementById('pinInput').addEventListener('keypress', function (e) {
     alert("Unauthorized Access Detected. System Data Purged.");
     window.location.href = "index.html"; 
 })();
+// 1. Security Configuration
+const PIN_HASH = "80562e89643d99762df70068305001155f9f60f38b248e3a290510103759371e"; // Hash for 123789
+const MASTER_DEVICE_KEY = "MAC-7722-X99-PRO-TECH"; 
+
+// 2. Hardware Validation (Runs instantly)
+(function validateHardware() {
+    const deviceToken = localStorage.getItem('device_uplink_auth');
+    
+    if (deviceToken !== MASTER_DEVICE_KEY) {
+        // FAILSAFE: Wipe and Terminate
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        document.documentElement.innerHTML = `
+            <body style="background:#020617; color:#ef4444; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:monospace; text-align:center;">
+                <h1 style="letter-spacing:0.5em;">CRITICAL SECURITY BREACH</h1>
+                <p style="font-size:10px; color:#475569;">UNAUTHORIZED HARDWARE DETECTED. LOCAL DATA PURGED.</p>
+            </body>
+        `;
+        
+        setTimeout(() => {
+            window.location.replace("https://www.google.com");
+        }, 3000);
+        throw new Error("Unauthorized Device Access");
+    }
+})();
+
+// 3. PIN Verification Logic
+async function hashPin(string) {
+    const utf8 = new TextEncoder().encode(string);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyPin() {
+    const input = document.getElementById('pinInput');
+    const modal = document.getElementById('pinModal');
+    
+    const hashedInput = await hashPin(input.value);
+
+    if (hashedInput === PIN_HASH) {
+        modal.style.opacity = '0';
+        setTimeout(() => { modal.classList.add('hidden'); }, 500);
+    } else {
+        // Wrong PIN also triggers a refresh for security
+        window.location.reload();
+    }
+}
