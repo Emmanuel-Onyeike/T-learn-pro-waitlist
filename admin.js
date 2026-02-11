@@ -101,37 +101,25 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateAdminDashboard, 30000); // Refresh every 30 seconds
 });
 
-// THE PIN HASH for 123789
-const PIN_HASH = "80562e89643d99762df70068305001155f9f60f38b248e3a290510103759371e";
+// This is your PIN "123789" hidden in a scrambled format
+const HIDDEN_PIN = "MTIzNzg5"; 
 
-// 1. Function to hash the user's input
-async function hashPin(string) {
-    const utf8 = new TextEncoder().encode(string);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// 2. Function to verify the PIN
-async function verifyPin() {
+function verifyPin() {
     const input = document.getElementById('pinInput');
     const modal = document.getElementById('pinModal');
     const error = document.getElementById('errorMessage');
 
-    if (!input.value) return;
+    // This decodes the scrambled string back to "123789" for a split second to check it
+    const authorized = atob(HIDDEN_PIN);
 
-    // Convert what user typed into a hash
-    const hashedInput = await hashPin(input.value);
-
-    // Compare the hashes
-    if (hashedInput === PIN_HASH) {
-        // SUCCESS
+    if (input.value === authorized) {
+        // SUCCESS: Unlock
         modal.style.opacity = '0';
         setTimeout(() => {
             modal.classList.add('hidden');
         }, 500);
     } else {
-        // FAILURE
+        // FAILURE: Error feedback
         if (error) error.classList.remove('hidden');
         input.value = "";
         input.classList.add('border-red-500');
@@ -144,7 +132,7 @@ async function verifyPin() {
     }
 }
 
-// 3. Setup listeners when page loads
+// Listener for the Enter key
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('pinInput');
     if (input) {
