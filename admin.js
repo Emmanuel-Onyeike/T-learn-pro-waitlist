@@ -104,6 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const PIN_HASH = "80562e89643d99762df70068305001155f9f60f38b248e3a290510103759371e";
 
+/**
+ * HASHING ENGINE
+ * Converts plain text into a SHA-256 string for secure comparison.
+ */
 async function hashPin(string) {
     const utf8 = new TextEncoder().encode(string);
     const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
@@ -111,107 +115,53 @@ async function hashPin(string) {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+/**
+ * AUTHENTICATION LOGIC
+ */
 async function verifyPin() {
     const input = document.getElementById('pinInput');
     const modal = document.getElementById('pinModal');
     const error = document.getElementById('errorMessage');
-    
-    // Hash the user's input
+
+    // Generate hash of user input
     const hashedInput = await hashPin(input.value);
 
     if (hashedInput === PIN_HASH) {
-        // Success
+        // SUCCESS: Unlock Dashboard
         modal.style.opacity = '0';
         setTimeout(() => {
             modal.classList.add('hidden');
         }, 500);
+        console.log("System Authenticated.");
     } else {
-        // Failure
+        // FAILURE: Show error and shake input
         error.classList.remove('hidden');
         input.value = "";
         input.classList.add('border-red-500');
         
+        // Shake animation
         input.animate([
             { transform: 'translateX(-5px)' },
             { transform: 'translateX(5px)' },
             { transform: 'translateX(0)' }
         ], { duration: 100, iterations: 3 });
+
+        // Force reload after 3 failed attempts to slow down hackers
+        // (Optional: remove if it's annoying)
+        setTimeout(() => {
+            if (error.innerHTML.includes("Blocked")) window.location.reload();
+        }, 1000);
     }
 }
 
-// Keep the Enter key listener
-document.getElementById('pinInput').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        verifyPin();
+// Event Listener for "Enter" key
+document.addEventListener('DOMContentLoaded', () => {
+    const pinField = document.getElementById('pinInput');
+    if (pinField) {
+        pinField.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                verifyPin();
+            }
+        });
     }
 });
-(function systemWipe() {
-    console.warn("INITIATING SYSTEM WIPE...");
-
-    // 1. Clear all browser storage (Waitlist data, session keys, etc.)
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // 2. Clear Cookies (Standard session cookies)
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i];
-        const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-    }
-
-    // 3. Force Redirect
-    // Change 'index.html' to your login page or a 404 page
-    alert("Unauthorized Access Detected. System Data Purged.");
-    window.location.href = "index.html"; 
-})();
-// 1. Security Configuration
-const PIN_HASH = "80562e89643d99762df70068305001155f9f60f38b248e3a290510103759371e"; // Hash for 123789
-const MASTER_DEVICE_KEY = "MAC-7722-X99-PRO-TECH"; 
-
-// 2. Hardware Validation (Runs instantly)
-(function validateHardware() {
-    const deviceToken = localStorage.getItem('device_uplink_auth');
-    
-    if (deviceToken !== MASTER_DEVICE_KEY) {
-        // FAILSAFE: Wipe and Terminate
-        localStorage.clear();
-        sessionStorage.clear();
-        
-        document.documentElement.innerHTML = `
-            <body style="background:#020617; color:#ef4444; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:monospace; text-align:center;">
-                <h1 style="letter-spacing:0.5em;">CRITICAL SECURITY BREACH</h1>
-                <p style="font-size:10px; color:#475569;">UNAUTHORIZED HARDWARE DETECTED. LOCAL DATA PURGED.</p>
-            </body>
-        `;
-        
-        setTimeout(() => {
-            window.location.replace("https://www.google.com");
-        }, 3000);
-        throw new Error("Unauthorized Device Access");
-    }
-})();
-
-// 3. PIN Verification Logic
-async function hashPin(string) {
-    const utf8 = new TextEncoder().encode(string);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function verifyPin() {
-    const input = document.getElementById('pinInput');
-    const modal = document.getElementById('pinModal');
-    
-    const hashedInput = await hashPin(input.value);
-
-    if (hashedInput === PIN_HASH) {
-        modal.style.opacity = '0';
-        setTimeout(() => { modal.classList.add('hidden'); }, 500);
-    } else {
-        // Wrong PIN also triggers a refresh for security
-        window.location.reload();
-    }
-}
