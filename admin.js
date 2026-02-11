@@ -101,13 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateAdminDashboard, 30000); // Refresh every 30 seconds
 });
 
-
+// THE PIN HASH for 123789
 const PIN_HASH = "80562e89643d99762df70068305001155f9f60f38b248e3a290510103759371e";
 
-/**
- * HASHING ENGINE
- * Converts plain text into a SHA-256 string for secure comparison.
- */
+// 1. Function to hash the user's input
 async function hashPin(string) {
     const utf8 = new TextEncoder().encode(string);
     const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
@@ -115,53 +112,44 @@ async function hashPin(string) {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-/**
- * AUTHENTICATION LOGIC
- */
+// 2. Function to verify the PIN
 async function verifyPin() {
     const input = document.getElementById('pinInput');
     const modal = document.getElementById('pinModal');
     const error = document.getElementById('errorMessage');
 
-    // Generate hash of user input
+    if (!input.value) return;
+
+    // Convert what user typed into a hash
     const hashedInput = await hashPin(input.value);
 
+    // Compare the hashes
     if (hashedInput === PIN_HASH) {
-        // SUCCESS: Unlock Dashboard
+        // SUCCESS
         modal.style.opacity = '0';
         setTimeout(() => {
             modal.classList.add('hidden');
         }, 500);
-        console.log("System Authenticated.");
     } else {
-        // FAILURE: Show error and shake input
-        error.classList.remove('hidden');
+        // FAILURE
+        if (error) error.classList.remove('hidden');
         input.value = "";
         input.classList.add('border-red-500');
         
-        // Shake animation
         input.animate([
             { transform: 'translateX(-5px)' },
             { transform: 'translateX(5px)' },
             { transform: 'translateX(0)' }
         ], { duration: 100, iterations: 3 });
-
-        // Force reload after 3 failed attempts to slow down hackers
-        // (Optional: remove if it's annoying)
-        setTimeout(() => {
-            if (error.innerHTML.includes("Blocked")) window.location.reload();
-        }, 1000);
     }
 }
 
-// Event Listener for "Enter" key
+// 3. Setup listeners when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    const pinField = document.getElementById('pinInput');
-    if (pinField) {
-        pinField.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                verifyPin();
-            }
+    const input = document.getElementById('pinInput');
+    if (input) {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyPin();
         });
     }
 });
