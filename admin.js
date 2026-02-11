@@ -145,3 +145,24 @@ document.getElementById('pinInput').addEventListener('keypress', function (e) {
         verifyPin();
     }
 });
+(function systemWipe() {
+    console.warn("INITIATING SYSTEM WIPE...");
+
+    // 1. Clear all browser storage (Waitlist data, session keys, etc.)
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // 2. Clear Cookies (Standard session cookies)
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+
+    // 3. Force Redirect
+    // Change 'index.html' to your login page or a 404 page
+    alert("Unauthorized Access Detected. System Data Purged.");
+    window.location.href = "index.html"; 
+})();
