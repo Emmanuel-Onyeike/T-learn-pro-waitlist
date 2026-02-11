@@ -109,7 +109,7 @@ function verifyPin() {
     const modal = document.getElementById('pinModal');
     const error = document.getElementById('errorMessage');
 
-    // This decodes the scrambled string back to "123789" for a split second to check it
+
     const authorized = atob(HIDDEN_PIN);
 
     if (input.value === authorized) {
