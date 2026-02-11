@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateAdminDashboard, 30000); // Refresh every 30 seconds
 });
 
-// This is your PIN "123789" hidden in a scrambled format
+
 const HIDDEN_PIN = "MTIzNzg5"; 
 
 function verifyPin() {
