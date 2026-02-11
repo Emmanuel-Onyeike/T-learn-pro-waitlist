@@ -100,3 +100,39 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAdminDashboard();
     setInterval(updateAdminDashboard, 30000); // Refresh every 30 seconds
 });
+
+
+const CORRECT_PIN = "123789";
+
+function verifyPin() {
+    const input = document.getElementById('pinInput');
+    const modal = document.getElementById('pinModal');
+    const error = document.getElementById('errorMessage');
+
+    if (input.value === CORRECT_PIN) {
+        // Success: Hide modal with a fade-out effect
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 500);
+    } else {
+        // Failure: Shake effect and error message
+        error.classList.remove('hidden');
+        input.value = "";
+        input.classList.add('border-red-500');
+        
+        // Brief shake animation
+        input.animate([
+            { transform: 'translateX(-5px)' },
+            { transform: 'translateX(5px)' },
+            { transform: 'translateX(0)' }
+        ], { duration: 100, iterations: 3 });
+    }
+}
+
+// Allow "Enter" key to submit
+document.getElementById('pinInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        verifyPin();
+    }
+});
