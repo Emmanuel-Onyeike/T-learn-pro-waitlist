@@ -102,26 +102,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-const CORRECT_PIN = "123789";
+const PIN_HASH = "80562e89643d99762df70068305001155f9f60f38b248e3a290510103759371e";
 
-function verifyPin() {
+async function hashPin(string) {
+    const utf8 = new TextEncoder().encode(string);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyPin() {
     const input = document.getElementById('pinInput');
     const modal = document.getElementById('pinModal');
     const error = document.getElementById('errorMessage');
+    
+    // Hash the user's input
+    const hashedInput = await hashPin(input.value);
 
-    if (input.value === CORRECT_PIN) {
-        // Success: Hide modal with a fade-out effect
+    if (hashedInput === PIN_HASH) {
+        // Success
         modal.style.opacity = '0';
         setTimeout(() => {
             modal.classList.add('hidden');
         }, 500);
     } else {
-        // Failure: Shake effect and error message
+        // Failure
         error.classList.remove('hidden');
         input.value = "";
         input.classList.add('border-red-500');
         
-        // Brief shake animation
         input.animate([
             { transform: 'translateX(-5px)' },
             { transform: 'translateX(5px)' },
@@ -130,7 +139,7 @@ function verifyPin() {
     }
 }
 
-// Allow "Enter" key to submit
+// Keep the Enter key listener
 document.getElementById('pinInput').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         verifyPin();
