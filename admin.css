@@ -109,3 +109,11 @@ input::placeholder {
         font-size: 2.5rem;
     }
 }
+#pinModal {
+    backdrop-filter: blur(20px);
+}
+
+/* Prevents scrolling while locked */
+body:has(#pinModal:not(.hidden)) {
+    overflow: hidden;
+}
